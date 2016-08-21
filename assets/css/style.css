@@ -1,17 +1,23 @@
 body {
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#309dcf+0,63b6db+100 */
-  /*background: #309dcf; /* Old browsers */*/
-  /*background: -moz-linear-gradient(top,  #309dcf 0%, #63b6db 100%); /* FF3.6-15 */*/
-  /*background: -webkit-linear-gradient(top,  #309dcf 0%,#63b6db 100%); /* Chrome10-25,Safari5.1-6 */*/
-  /*background: linear-gradient(to bottom,  #309dcf 0%,#63b6db 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */*/
-  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#309dcf', endColorstr='#63b6db',GradientType=0 ); /* IE6-9 */*/
-  background-color: #dcedce;
+  background-color: #fafafa;
 }
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Cinzel', serif;
+}
+
 
 header {
   margin-bottom: 2em;
 }
-
+header:after {
+  background-color: #ddd;
+  content: '';
+  display: block;
+  height: 1px;
+  margin: 0.5em auto 0;
+  width: 50%;
+}
 header h1:after {
   background-color: #ddd;
   content: '';
@@ -25,6 +31,7 @@ header h1,
 header h4 {
   font-family: 'Cinzel', serif;
   line-height: 1;
+  margin-bottom: 0;
   padding: 0.25em 0 .5em;
 }
 
@@ -34,34 +41,38 @@ header h4 {
   margin: 0 auto;
   max-width: 85%;
 }
-.small,
-.medium {
-  margin-left: auto;
-  margin-right: auto;
-}
-.small {
-  width: 40%;
-}
-.small > .Avatar--round {
-  width: 15%;
-}
-.medium {
-  width: 75%;
+
+
+
+
+
+/* Instructions */
+.Instructions {
+  font-weight: bold;
 }
 
+
+
+/* Fight Section */
 .Active-players {
-  float: left;
-  width: 100%;
+  margin: 0 auto 2em;
+  overflow: auto;
+  width: 80%;
 }
 .Active-players > div {
   float: left;
   width: 33.33333%;
 }
-
-img {
-  width: 100%;
-  height: 100%;
+.Attack {
+  padding: 8% 0 0;
 }
+.Attack__button {
+  font-size: 16px;
+  height: 48px;
+  opacity: 0;
+  padding: 6px 30px;
+}
+
 
 
 
@@ -71,8 +82,7 @@ img {
   padding-bottom: 2em;
   width: 100%;
 }
-.Avatar,
-.Avatar--opponent {
+.Avatar {
   border-radius: 50%;
   display: inline-block;
   overflow: hidden;
@@ -107,13 +117,6 @@ img.Avatar--round:hover {
 
 
 
-
-
-
-/* Instructions */
-.Instructions {
-  font-weight: bold;
-}
 
 
 
