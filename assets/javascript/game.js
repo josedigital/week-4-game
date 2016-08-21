@@ -43,6 +43,7 @@ $(function() {
     userContainer: $('.User'),
     opponentContainer: $('.Opponent'),
     attackButton: $('.Attack__button'),
+    instructions: $('.Instructions'),
 
 
 
@@ -99,10 +100,10 @@ $(function() {
 
         // set user properties
         user.name = img.data('name');
-        user.health_points = img.data('healthpoints');
-        user.attack_power = img.data('attackpower');
-        user.base_attack_power = img.data('baseattackpower');
-        user.counter_attack_power = img.data('counterattackpower');
+        user.health_points = parseInt(img.data('healthpoints'));
+        user.attack_power = parseInt(img.data('attackpower'));
+        user.base_attack_power = parseInt(img.data('baseattackpower'));
+        user.counter_attack_power = parseInt(img.data('counterattackpower'));
 
 
 
@@ -118,6 +119,11 @@ $(function() {
 
         // append player properties
         game.userContainer.append(playerprops);
+
+        // update instructions
+        game.instructions.fadeOut('slow', function() {
+          $(this).html('<p>Now choose your opponent...</p>').fadeIn('slow');
+        })
       }
       else {
 
@@ -126,9 +132,9 @@ $(function() {
 
         // set opponent properties
         opponent.name = img.data('name');
-        opponent.health_points = img.data('healthpoints');
-        opponent.attack_power = img.data('attackpower');
-        opponent.counter_attack_power = img.data('counterattackpower');
+        opponent.health_points = parseInt(img.data('healthpoints'));
+        opponent.attack_power = parseInt(img.data('attackpower'));
+        opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
 
 
         // move item
@@ -162,8 +168,8 @@ $(function() {
       
       this.attackButton.on('click', function() {
         
-        user.base_attack_power = parseInt(user.base_attack_power)
-        user.attack_power = parseInt(user.attack_power);
+        user.base_attack_power = user.base_attack_power
+        user.attack_power = user.attack_power;
         console.log(user.attack_power+=user.base_attack_power);
 
         
