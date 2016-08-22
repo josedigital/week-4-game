@@ -28,12 +28,6 @@ $(function() {
 
 
 
-
-
-
-
-
-
   // game object
   var game = {
 
@@ -116,17 +110,6 @@ $(function() {
     },
 
 
-    createPlayer: function(avatar) {
-
-
-      
-
-      
-      console.log($user.attack_power);
-
-
-
-    },
 
     // player object class
     player: {
@@ -260,8 +243,6 @@ $(function() {
 
 
 
-
-
         /*------------- OPPONENT CALCULATIONS -------------------*/
 
         // opponent health = opponent health - user attack
@@ -278,10 +259,6 @@ $(function() {
 
 
 
-
-
-
-
         /*------------- COMMENTATOR -------------------*/
         comments = '<p>You hit ' + $opponent.name + ' with ' + $user.attack_power + ' points worth of damage.</p>'
                   +'<p>' + $opponent.name + ' hit you with ' + $opponent.attack_power + ' ponts worth of damage.</p>';
@@ -294,12 +271,8 @@ $(function() {
         // user attack = user attack + user base attack -- has to be done after first click
         // so it is located at the end of the entire click event so that first hit is base_attack_power
         // otherwise the first hit will be attack_power + base_attack_power
-        $user.attack_power = $user.attack_power + $user.base_attack_power;
-        // console.log('$user.attack_power: ' + $user.attack_power + ' + $user.base_attack_power: ' + $user.base_attack_power + ' = ' + $user.attack_power);
-        // console.log('$opponent.health_points: ' + $opponent.health_points + ' $user.attack_power: ' + $user.attack_power);
-
-
-
+        $user.attack_power += $user.base_attack_power;
+        
 
         // check for win
         if($user.health_points > 0 && $opponent.health_points <= 0) {
@@ -315,6 +288,7 @@ $(function() {
         if($user.health_points <= 0 && $opponent.health_points <= 0) {
           game.draw();
         }
+
 
       });
 
@@ -337,7 +311,6 @@ $(function() {
       $numPlayer = 1;
       // user wins: select new opponent
       this.makeSelection();
-
 
       
       
@@ -363,6 +336,7 @@ $(function() {
           // break from old game - prevent fight button from tracking old game
           $newgame = true;
         }
+
 
         
         // add comments to DOM

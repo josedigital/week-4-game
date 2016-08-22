@@ -2,5 +2,12 @@
 
 ##TODO:
 
-- fight button issue mostly fixed
-  - it is still tallying previous game's attack_power when playing new game - can't figure it out.
+- refactor code
+  - possibly abstract some of the functions:
+    - show/hide buttons
+    - commentary
+    - player object
+      - maybe create html from object, rather than extract object prop values from html?
+
+fight button issue fixed!
+
