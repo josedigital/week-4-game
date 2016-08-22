@@ -13,16 +13,16 @@ $(function() {
 
   var characters = 
         '<div class="Avatar">'
-          + '<img src="assets/images/the-pirate.jpg" alt="the pirate" class="Avatar--round the-pirate" data-healthpoints="150" data-attackpower="150" data-baseattackpower="150" data-counterattackpower="150" data-name="The Dread Pirate Roberts">'
+          + '<img src="assets/images/the-pirate.jpg" alt="the pirate" class="Avatar--round the-pirate" data-healthpoints="130" data-attackpower="8" data-counterattackpower="16" data-name="The Dread Pirate Roberts">'
         + '</div>'
         + '<div class="Avatar">'
-          + '<img src="assets/images/the-albino.jpg" alt="the albino" class="Avatar--round the-albino" data-healthpoints="150" data-attackpower="150" data-baseattackpower="150" data-counterattackpower="150" data-name="The Albino">'
+          + '<img src="assets/images/the-albino.jpg" alt="the albino" class="Avatar--round the-albino" data-healthpoints="100" data-attackpower="5" data-counterattackpower="10" data-name="The Albino">'
         + '</div>'
         + '<div class="Avatar">'
-          + '<img src="assets/images/the-count.jpeg" alt="the count" class="Avatar--round the-count" data-healthpoints="150" data-attackpower="150" data-baseattackpower="150" data-counterattackpower="150" data-name="Count Rugen">'
+          + '<img src="assets/images/the-count.jpeg" alt="the count" class="Avatar--round the-count" data-healthpoints="120" data-attackpower="12" data-counterattackpower="13" data-name="Count Rugen">'
         + '</div>'
         + '<div class="Avatar">'
-          + '<img src="assets/images/the-prince.jpeg" alt="the prince" class="Avatar--round the-prince" data-healthpoints="150" data-attackpower="150" data-baseattackpower="150" data-counterattackpower="150" data-name="Prince Humperdinck">'
+          + '<img src="assets/images/the-prince.jpeg" alt="the prince" class="Avatar--round the-prince" data-healthpoints="160" data-attackpower="15" data-counterattackpower="12" data-name="Prince Humperdinck">'
         + '</div>';
 
 
@@ -47,6 +47,7 @@ $(function() {
     opponentPropsContainer: $('.Opponent__properties'),
     attackButton: $('.Attack__button'),
     instructions: $('.Instructions'),
+    commentator: $('.Commentator'),
 
 
 
@@ -107,7 +108,7 @@ $(function() {
         $user.name = img.data('name');
         $user.health_points = parseInt(img.data('healthpoints'));
         $user.attack_power = parseInt(img.data('attackpower'));
-        $user.base_attack_power = parseInt(img.data('baseattackpower'));
+        $user.base_attack_power = $user.attack_power;
         $user.counter_attack_power = parseInt(img.data('counterattackpower'));
 
 
@@ -118,7 +119,7 @@ $(function() {
          game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
 
         // create player properties html
-        playerprops = '<p><strong>' + $user.name + '</strong></p>'
+        playerprops = '<h6><strong>' + $user.name + '</strong></h6>'
                       +'<p>Health: ' + $user.health_points + '</p>';
 
         // append player properties
@@ -127,7 +128,7 @@ $(function() {
         // update instructions
         game.instructions.fadeOut('slow', function() {
           $(this).html('<p>Now choose your opponent...</p>').fadeIn('slow');
-        })
+        });
       }
       else {
         
@@ -146,14 +147,23 @@ $(function() {
           avatar.detach().prependTo(game.opponentContainer);
 
           // create player properties html
-          playerprops = '<p><strong>' + $opponent.name + '</strong></p>'
+          playerprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
                         +'<p>Health: ' + $opponent.health_points + '</p>';
 
           // append player properties
           game.opponentPropsContainer.append(playerprops);
 
-          // show attack button
-          game.attackButton.addClass('animated fadeIn');
+          
+
+          // update instructions
+          game.instructions.fadeOut('slow', function() {
+            $(this).html('<p>Ready... Set...</p>').fadeIn('slow', function() {
+              // show attack button
+              game.attackButton.addClass('animated fadeInUp');
+              // show comments
+              game.commentator.addClass('animated fadeInUp');
+            });
+          });
 
           // stop ability to add more than 1 opponent
           $numPlayer = 0;
@@ -177,20 +187,69 @@ $(function() {
       
       this.attackButton.on('click', function() {
         
-        $user.base_attack_power = $user.base_attack_power
-        $user.attack_power = $user.attack_power;
-        console.log($user.attack_power+=$user.base_attack_power);
-        $user.current_health = $user.attack_power+=$user.base_attack_power;
+        /*------------- USER CALCULATIONS -------------------*/
 
-        // create player properties html
-        playerprops = '<p><strong>' + $user.name + '</strong></p>'
-                      +'<p>Health: ' + $user.current_health + '</p>';
+        // user health = user health - oppenent attack
+        $user.health_points = $user.health_points-=$opponent.attack_power;
+
+        // create user properties html
+        userprops = '<h6><strong>' + $user.name + '</strong></h6>'
+                      +'<p>Health: ' + $user.health_points + '</p>';
 
         // append player properties
-        game.userPropsContainer.html(playerprops);
+        game.userPropsContainer.html(userprops);
 
 
-        
+
+
+
+
+        /*------------- OPPONENT CALCULATIONS -------------------*/
+
+        // opponent health = opponent health - user attack
+        $opponent.health_points = $opponent.health_points-=$user.attack_power;
+
+
+        // create player properties html
+        opponentprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
+                      +'<p>Health: ' + $opponent.health_points + '</p>';
+
+        // append player properties
+        game.opponentPropsContainer.html(opponentprops);
+
+
+
+
+
+
+
+
+        /*------------- COMMENTATOR -------------------*/
+        comments = '<p>You hit ' + $opponent.name + ' with ' + $user.attack_power + ' points worth of damage.</p>'
+                  +'<p>' + $opponent.name + ' hit you with ' + $opponent.attack_power + ' ponts worth of damage.</p>';
+        // add comments to DOM
+        game.commentator.html(comments);
+
+
+
+        /*------------- USER ATTACK CALCULATION -------------------*/
+        // user attack = user attack + user base attack -- has to be done after first click
+        // so it is located at the end of the entire click event so that first hit is base_attack_power
+        // otherwise the first hit will be attack_power + base_attack_power
+        $user.attack_power+=$user.base_attack_power; 
+
+
+
+
+        // check for win
+        if($user.health_points > 0 && $opponent.health_points <= 0) {
+          // user wins
+          console.log('user wins!');
+        }
+        if($user.health_points <= 0 && $opponent.health_points > 0) {
+          // opponent wins
+          console.log('opponent wins!');
+        }
 
         return false;
       });
