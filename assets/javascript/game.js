@@ -80,6 +80,10 @@ $(function() {
       // remove comments
       this.commentator.empty();
 
+      if($user){
+        console.log($user.attack_power);
+      }
+
       // start by making a selection
       this.makeSelection();
 
@@ -121,40 +125,39 @@ $(function() {
 
       // get image to get data
       var img = avatar.find('img');
+
       
 
-      if($isUser) {
+      // create user object
+      $user = Object.create(this.player);
+      
 
-        // create user object
-        $user = Object.create(this.player);
-        
-
-        // set $user properties
-        $user.name = img.data('name');
-        $user.health_points = parseInt(img.data('healthpoints'));
-        $user.attack_power = parseInt(img.data('attackpower'));
-        $user.base_attack_power = $user.attack_power;
-        $user.counter_attack_power = parseInt(img.data('counterattackpower'));
+      // set $user properties
+      $user.name = img.data('name');
+      $user.health_points = parseInt(img.data('healthpoints'));
+      $user.attack_power = parseInt(img.data('attackpower'));
+      $user.base_attack_power = $user.attack_power;
+      $user.counter_attack_power = parseInt(img.data('counterattackpower'));
 
 
-        // move item
-        avatar.detach().prependTo(game.userContainer);
+      // move item
+      avatar.detach().prependTo(game.userContainer);
 
-        // add 'Choose opponent' language
-         game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
+      // add 'Choose opponent' language
+       game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
 
-        // create player properties html
-        playerprops = '<h6><strong>' + $user.name + '</strong></h6>'
-                      +'<p>Health: ' + $user.health_points + '</p>';
+      // create player properties html
+      playerprops = '<h6><strong>' + $user.name + '</strong></h6>'
+                    +'<p>Health: ' + $user.health_points + '</p>';
 
-        // append player properties
-        game.userPropsContainer.append(playerprops);
+      // append player properties
+      game.userPropsContainer.append(playerprops);
 
-        // update instructions
-        game.instructions.fadeOut('slow', function() {
-          $(this).html('<p>Now choose your opponent...</p>').fadeIn('slow');
-        });
-      }
+      // update instructions
+      game.instructions.fadeOut('slow', function() {
+        $(this).html('<p>Now choose your opponent...</p>').fadeIn('slow');
+      });
+    
 
 
       
@@ -178,7 +181,7 @@ $(function() {
         this.attackButton.attr('disabled', false);
 
         // create opponent object
-        $opponent = Object.create(this.player);  
+        $opponent = Object.create(this.player);
 
         // set $opponent properties
         $opponent.name = img.data('name');
@@ -212,7 +215,7 @@ $(function() {
         $numPlayer = 0;
 
         // start the match
-        this.fight($user, $opponent);
+        this.fight();
       }
 
 
@@ -222,13 +225,13 @@ $(function() {
 
 
     fight: function() {
-       
+      
       this.attackButton.on('click', function() {
         
         /*------------- USER CALCULATIONS -------------------*/
 
         // user health = user health - oppenent attack
-        $user.health_points = $user.health_points - $opponent.attack_power;
+        $user.health_points -= $opponent.attack_power;
 
         // create user properties html
         userprops = '<h6><strong>' + $user.name + '</strong></h6>'
@@ -275,7 +278,8 @@ $(function() {
         // so it is located at the end of the entire click event so that first hit is base_attack_power
         // otherwise the first hit will be attack_power + base_attack_power
         $user.attack_power = $user.attack_power + $user.base_attack_power;
-        console.log('$user.attack_power: ' + $user.attack_power + ' + $user.base_attack_power: ' + $user.base_attack_power + ' = ' + $user.attack_power);
+        // console.log('$user.attack_power: ' + $user.attack_power + ' + $user.base_attack_power: ' + $user.base_attack_power + ' = ' + $user.attack_power);
+        // console.log('$opponent.health_points: ' + $opponent.health_points + ' $user.attack_power: ' + $user.attack_power);
 
 
 
