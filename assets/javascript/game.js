@@ -80,27 +80,23 @@ $(function() {
       // remove comments
       this.commentator.empty();
 
-      if($user){
-        console.log($user.attack_power);
+      if($user) {
+        $user = Object.create(this.player);
+        $opponent = Object.create(this.player);
+        console.log($user);
       }
+
 
       // start by making a selection
       this.makeSelection();
 
-      
+      // start the match
+      this.fight();
       
 
     }, // end init
 
 
-    // player object class
-    player: {
-        name: '',
-        health_points: '',
-        attack_power: '',
-        base_attack_power: '',
-        counter_attack_power: ''
-    },
 
 
     makeSelection: function() {
@@ -119,18 +115,35 @@ $(function() {
     },
 
 
+    createPlayer: function(avatar) {
+
+
+      
+
+      
+      console.log($user.attack_power);
+
+
+
+    },
+
+    // player object class
+    player: {
+        name: 0,
+        health_points: 0,
+        attack_power: 0,
+        base_attack_power: 0,
+        counter_attack_power: 0
+    },
+
 
     selectUser: function(avatar) {
-
 
       // get image to get data
       var img = avatar.find('img');
 
-      
-
       // create user object
       $user = Object.create(this.player);
-      
 
       // set $user properties
       $user.name = img.data('name');
@@ -138,7 +151,6 @@ $(function() {
       $user.attack_power = parseInt(img.data('attackpower'));
       $user.base_attack_power = $user.attack_power;
       $user.counter_attack_power = parseInt(img.data('counterattackpower'));
-
 
       // move item
       avatar.detach().prependTo(game.userContainer);
@@ -179,6 +191,7 @@ $(function() {
 
         // enable fight button if it is disabled
         this.attackButton.attr('disabled', false);
+        
 
         // create opponent object
         $opponent = Object.create(this.player);
@@ -188,6 +201,7 @@ $(function() {
         $opponent.health_points = parseInt(img.data('healthpoints'));
         $opponent.attack_power = parseInt(img.data('attackpower'));
         $opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
+
 
         // move item
         avatar.detach().prependTo(game.opponentContainer);
@@ -214,9 +228,9 @@ $(function() {
         // stop ability to add more than 1 opponent
         $numPlayer = 0;
 
-        // start the match
-        this.fight();
+        
       }
+
 
 
     }, // end selectOpponent
@@ -225,9 +239,10 @@ $(function() {
 
 
     fight: function() {
-      
+      var counter = 0;
       this.attackButton.on('click', function() {
-        
+        counter++;
+        console.log(counter);
         /*------------- USER CALCULATIONS -------------------*/
 
         // user health = user health - oppenent attack
@@ -299,8 +314,8 @@ $(function() {
           game.draw();
         }
 
-        return false;
       });
+
 
     },
 
