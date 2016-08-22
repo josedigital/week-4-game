@@ -64,13 +64,19 @@ header h4 {
   width: 33.33333%;
 }
 .Attack {
-  padding: 8% 0 0;
+  /*padding: 8% 0 0;*/
 }
-.Attack__button {
+.Attack__button,
+.Reset__button {
+  display: none;
   font-size: 16px;
   height: 48px;
   opacity: 0;
   padding: 6px 30px;
+}
+.Attack__button.animated,
+.Reset__button.animated {
+  display: inline-block;
 }
 .Commentator {
   opacity: 0;

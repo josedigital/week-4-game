@@ -1,7 +1,7 @@
 $(function() {
 
   // set global vars
-  var $isUser = true,
+  var $isUser,
       $playerprops,
       $user,
       $opponent,
@@ -45,6 +45,7 @@ $(function() {
     opponentContainer: $('.Opponent'),
     opponentPropsContainer: $('.Opponent__properties'),
     attackButton: $('.Attack__button'),
+    resetButton: $('.Reset__button'),
     instructions: $('.Instructions'),
     commentator: $('.Commentator'),
 
@@ -53,18 +54,35 @@ $(function() {
     // initialize game
     init: function() {
 
+
+      // allow user to begin
+      $isUser = true;
+
+      // set numPlayer to 1 so we can select one opponent
+      $numPlayer = 1;
+
       // add list of characters to DOM
       this.characterSelector.html(characters).addClass('animated flipInX');
 
+      // reset instructions
+      this.instructions.html('<p>Choose a player to begin your duel...</p>');
+
       // empty user + opponent Containers
       this.userContainer.find('.Avatar').remove();
+      this.userPropsContainer.empty();
       this.opponentContainer.find('.Avatar').remove();
+      this.opponentPropsContainer.empty();
+
+      // hide buttons
+      this.attackButton.removeClass('animated fadeOutUp');
+      this.resetButton.removeClass('animated');
+
+      // remove comments
+      this.commentator.empty();
 
       // start by making a selection
       this.makeSelection();
 
-      // set numPlayer to 1 so we can select one opponent
-      $numPlayer = 1;
       
       
 
@@ -156,6 +174,9 @@ $(function() {
         
       if($numPlayer > 0) {
 
+        // enable fight button if it is disabled
+        this.attackButton.attr('disabled', false);
+
         // create opponent object
         $opponent = Object.create(this.player);  
 
@@ -224,7 +245,7 @@ $(function() {
         /*------------- OPPONENT CALCULATIONS -------------------*/
 
         // opponent health = opponent health - user attack
-        $opponent.health_points = $opponent.health_points-=$user.attack_power;
+        $opponent.health_points-=$user.attack_power;
 
 
         // create player properties html
@@ -261,12 +282,16 @@ $(function() {
         // check for win
         if($user.health_points > 0 && $opponent.health_points <= 0) {
           // user wins
-          console.log('user wins!');
           game.win();
         }
+        // check for lose
         if($user.health_points <= 0 && $opponent.health_points > 0) {
-          // opponent wins
-          console.log('opponent wins!');
+          // opponent wins, user loses
+          game.lose();
+        }
+        // check for tie
+        if($user.health_points <= 0 && $opponent.health_points <= 0) {
+          game.draw();
         }
 
         return false;
@@ -282,24 +307,88 @@ $(function() {
         $(this).remove();
       });
       this.opponentPropsContainer.empty();
+
+      // disable fight button until a new opponent is picked
+      this.attackButton.attr('disabled', true);
       
       // allow another opponent selection
       $numPlayer = 1;
       // user wins: select new opponent
       this.makeSelection();
 
+
       
       
       /*------------- COMMENTATOR -------------------*/
         comments = '<p>You have bested ' + $opponent.name +'.</p>'
                   +'<p>Choose a new opponent to continue playing.</p>';
+
+
+        // if all opponents have been beat
+        if($('.characters > div').length < 1) {
+          // replace attack button with reset button
+          this.attackButton.removeClass('fadeInUp').addClass('fadeOutUp');
+          this.resetButton.addClass('animated fadeInUp');
+
+          comments = '<p>You have bested ' + $opponent.name +'.</p>'
+                    +'<p>Play again?.</p>';
+
+          // reset game
+          this.resetButton.on('click', function() {
+            game.init();
+          });
+        }
+
         // add comments to DOM
         game.commentator.html(comments);
+
+
+
+
 
     },
 
     lose: function() {
       // user loses: restart game
+      // replace attack button with reset button
+      this.attackButton.removeClass('fadeInUp').addClass('fadeOutUp');
+      this.resetButton.addClass('animated fadeInUp');
+      
+
+      /*------------- COMMENTATOR -------------------*/
+        comments = '<p>Inconceivable! You have been bested.</p>';
+        // add comments to DOM
+        game.commentator.html(comments);
+
+
+      // reset game
+      this.resetButton.on('click', function() {
+        game.init();
+      });
+
+      
+    },
+
+
+
+    draw: function() {
+
+      // replace attack button with reset button
+      this.attackButton.removeClass('fadeInUp').addClass('fadeOutUp');
+      this.resetButton.addClass('animated fadeInUp');
+      
+
+      /*------------- COMMENTATOR -------------------*/
+        comments = '<p>Well played. A draw it is.</p>';
+        // add comments to DOM
+        game.commentator.html(comments);
+
+
+      // reset game
+      this.resetButton.on('click', function() {
+        game.init();
+      });
+
     }
 
 
