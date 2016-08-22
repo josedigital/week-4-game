@@ -222,17 +222,17 @@ $(function() {
 
 
     fight: function() {
-      
+       
       this.attackButton.on('click', function() {
         
         /*------------- USER CALCULATIONS -------------------*/
 
         // user health = user health - oppenent attack
-        $user.health_points = $user.health_points-=$opponent.attack_power;
+        $user.health_points = $user.health_points - $opponent.attack_power;
 
         // create user properties html
         userprops = '<h6><strong>' + $user.name + '</strong></h6>'
-                      +'<p>Health: ' + $user.health_points + '</p>';
+                   +'<p>Health: ' + $user.health_points + '</p>';
 
         // append player properties
         game.userPropsContainer.html(userprops);
@@ -245,12 +245,12 @@ $(function() {
         /*------------- OPPONENT CALCULATIONS -------------------*/
 
         // opponent health = opponent health - user attack
-        $opponent.health_points-=$user.attack_power;
+        $opponent.health_points -= $user.attack_power;
 
 
         // create player properties html
         opponentprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
-                      +'<p>Health: ' + $opponent.health_points + '</p>';
+                       +'<p>Health: ' + $opponent.health_points + '</p>';
 
         // append player properties
         game.opponentPropsContainer.html(opponentprops);
@@ -274,7 +274,8 @@ $(function() {
         // user attack = user attack + user base attack -- has to be done after first click
         // so it is located at the end of the entire click event so that first hit is base_attack_power
         // otherwise the first hit will be attack_power + base_attack_power
-        $user.attack_power+=$user.base_attack_power; 
+        $user.attack_power = $user.attack_power + $user.base_attack_power;
+        console.log('$user.attack_power: ' + $user.attack_power + ' + $user.base_attack_power: ' + $user.base_attack_power + ' = ' + $user.attack_power);
 
 
 
