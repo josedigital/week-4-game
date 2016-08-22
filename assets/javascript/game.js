@@ -60,16 +60,8 @@ $(function() {
       this.userContainer.find('.Avatar').remove();
       this.opponentContainer.find('.Avatar').remove();
 
-      
-      // user selects their character
-      this.characterSelector.find('.Avatar').on('click', function() {
-        // send selection to selectUser function
-        game.selectUser($(this));
-
-        // set isUser to false
-        $isUser = false;
-      });
-
+      // start by making a selection
+      this.makeSelection();
 
       // set numPlayer to 1 so we can select one opponent
       $numPlayer = 1;
@@ -86,6 +78,22 @@ $(function() {
         attack_power: '',
         base_attack_power: '',
         counter_attack_power: ''
+    },
+
+
+    makeSelection: function() {
+      // user selects their character
+      this.characterSelector.find('.Avatar').on('click', function() {
+        if($isUser) {
+        // send selection to selectUser function
+          game.selectUser($(this));
+        } else {
+          game.selectOpponent($(this));
+        }
+
+        // set isUser to false
+        $isUser = false;
+      });
     },
 
 
@@ -129,49 +137,6 @@ $(function() {
           $(this).html('<p>Now choose your opponent...</p>').fadeIn('slow');
         });
       }
-      else {
-        
-        if($numPlayer > 0) {
-
-          // create opponent object
-          $opponent = Object.create(this.player);  
-
-          // set $opponent properties
-          $opponent.name = img.data('name');
-          $opponent.health_points = parseInt(img.data('healthpoints'));
-          $opponent.attack_power = parseInt(img.data('attackpower'));
-          $opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
-
-          // move item
-          avatar.detach().prependTo(game.opponentContainer);
-
-          // create player properties html
-          playerprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
-                        +'<p>Health: ' + $opponent.health_points + '</p>';
-
-          // append player properties
-          game.opponentPropsContainer.append(playerprops);
-
-          
-
-          // update instructions
-          game.instructions.fadeOut('slow', function() {
-            $(this).html('<p>Ready... Set...</p>').fadeIn('slow', function() {
-              // show attack button
-              game.attackButton.addClass('animated fadeInUp');
-              // show comments
-              game.commentator.addClass('animated fadeInUp');
-            });
-          });
-
-          // stop ability to add more than 1 opponent
-          $numPlayer = 0;
-
-          // start the match
-          this.fight($user, $opponent);
-        }
-
-      }
 
 
       
@@ -179,6 +144,59 @@ $(function() {
 
 
     }, // end selectUser
+
+
+
+
+
+    selectOpponent: function(avatar) {
+
+      // get image to get data
+      var img = avatar.find('img');
+        
+      if($numPlayer > 0) {
+
+        // create opponent object
+        $opponent = Object.create(this.player);  
+
+        // set $opponent properties
+        $opponent.name = img.data('name');
+        $opponent.health_points = parseInt(img.data('healthpoints'));
+        $opponent.attack_power = parseInt(img.data('attackpower'));
+        $opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
+
+        // move item
+        avatar.detach().prependTo(game.opponentContainer);
+
+        // create player properties html
+        playerprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
+                      +'<p>Health: ' + $opponent.health_points + '</p>';
+
+        // append player properties
+        game.opponentPropsContainer.append(playerprops);
+
+        
+
+        // update instructions
+        game.instructions.fadeOut('slow', function() {
+          $(this).html('<p>Ready... Set...</p>').fadeIn('slow', function() {
+            // show attack button
+            game.attackButton.addClass('animated fadeInUp');
+            // show comments
+            game.commentator.addClass('animated fadeInUp');
+          });
+        });
+
+        // stop ability to add more than 1 opponent
+        $numPlayer = 0;
+
+        // start the match
+        this.fight($user, $opponent);
+      }
+
+
+    }, // end selectOpponent
+
 
 
 
@@ -258,16 +276,17 @@ $(function() {
 
 
     win: function() {
-      // user wins: select new opponent
+      
       // remove old opponent
       this.opponentContainer.find('.Avatar').fadeOut('slow', function() {
         $(this).remove();
       });
       this.opponentPropsContainer.empty();
-      console.log($isUser);
-      $isUser = true;
-      console.log($isUser);
-      this.selectUser();
+      
+      // allow another opponent selection
+      $numPlayer = 1;
+      // user wins: select new opponent
+      this.makeSelection();
 
       
       
