@@ -5,7 +5,8 @@ $(function() {
       $playerprops,
       $user,
       $opponent,
-      $numPlayer;
+      $numPlayer,
+      $newgame;
       
 
   
@@ -239,10 +240,11 @@ $(function() {
 
 
     fight: function() {
-      var counter = 0;
+      
+      if($newgame) { return; }
+
       this.attackButton.on('click', function() {
-        counter++;
-        console.log(counter);
+
         /*------------- USER CALCULATIONS -------------------*/
 
         // user health = user health - oppenent attack
@@ -357,12 +359,16 @@ $(function() {
           this.resetButton.on('click', function() {
             game.init();
           });
+
+          // break from old game - prevent fight button from tracking old game
+          $newgame = true;
         }
 
+        
         // add comments to DOM
         game.commentator.html(comments);
 
-
+        
 
 
 
@@ -385,6 +391,8 @@ $(function() {
       this.resetButton.on('click', function() {
         game.init();
       });
+
+      
 
       
     },
