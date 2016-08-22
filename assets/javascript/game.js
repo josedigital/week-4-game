@@ -1,8 +1,7 @@
 $(function() {
 
-  // selection box
-  var $selectionBox = $('.selection-box'),
-      $isUser = true,
+  // set global vars
+  var $isUser = true,
       $playerprops,
       $user,
       $opponent,
@@ -55,7 +54,7 @@ $(function() {
     init: function() {
 
       // add list of characters to DOM
-      $selectionBox.html(characters).addClass('animated flipInX');
+      this.characterSelector.html(characters).addClass('animated flipInX');
 
       // empty user + opponent Containers
       this.userContainer.find('.Avatar').remove();
@@ -245,6 +244,7 @@ $(function() {
         if($user.health_points > 0 && $opponent.health_points <= 0) {
           // user wins
           console.log('user wins!');
+          game.win();
         }
         if($user.health_points <= 0 && $opponent.health_points > 0) {
           // opponent wins
@@ -254,6 +254,33 @@ $(function() {
         return false;
       });
 
+    },
+
+
+    win: function() {
+      // user wins: select new opponent
+      // remove old opponent
+      this.opponentContainer.find('.Avatar').fadeOut('slow', function() {
+        $(this).remove();
+      });
+      this.opponentPropsContainer.empty();
+      console.log($isUser);
+      $isUser = true;
+      console.log($isUser);
+      this.selectUser();
+
+      
+      
+      /*------------- COMMENTATOR -------------------*/
+        comments = '<p>You have bested ' + $opponent.name +'.</p>'
+                  +'<p>Choose a new opponent to continue playing.</p>';
+        // add comments to DOM
+        game.commentator.html(comments);
+
+    },
+
+    lose: function() {
+      // user loses: restart game
     }
 
 

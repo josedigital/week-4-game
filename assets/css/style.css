@@ -57,7 +57,7 @@ header h4 {
 .Active-players {
   margin: 0 auto 2em;
   overflow: auto;
-  width: 80%;
+  /*width: 80%;*/
 }
 .Active-players > div {
   float: left;
