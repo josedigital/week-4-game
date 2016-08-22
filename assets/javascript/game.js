@@ -5,7 +5,8 @@ $(function() {
       $isUser = true,
       $playerprops,
       $user,
-      $opponent;
+      $opponent,
+      $numPlayer;
       
 
   
@@ -41,7 +42,9 @@ $(function() {
     opponentSelector: $('.opponents'),
     characterSelector: $('.characters'),
     userContainer: $('.User'),
+    userPropsContainer: $('.User__properties'),
     opponentContainer: $('.Opponent'),
+    opponentPropsContainer: $('.Opponent__properties'),
     attackButton: $('.Attack__button'),
     instructions: $('.Instructions'),
 
@@ -54,12 +57,12 @@ $(function() {
       $selectionBox.html(characters).addClass('animated flipInX');
 
       // empty user + opponent Containers
-      this.userContainer.empty();
-      this.opponentContainer.empty();
+      this.userContainer.find('.Avatar').remove();
+      this.opponentContainer.find('.Avatar').remove();
 
       
       // user selects their character
-      this.characterSelector.find('.Avatar').click(function() {
+      this.characterSelector.find('.Avatar').on('click', function() {
         // send selection to selectUser function
         game.selectUser($(this));
 
@@ -67,13 +70,16 @@ $(function() {
         $isUser = false;
       });
 
+
+      // set numPlayer to 1 so we can select one opponent
+      $numPlayer = 1;
       
       
 
     }, // end init
 
 
-
+    // player object class
     player: {
         name: '',
         health_points: '',
@@ -94,31 +100,29 @@ $(function() {
       if($isUser) {
 
         // create user object
-        user = Object.create(this.player);
-        
+        $user = Object.create(this.player);
         
 
-        // set user properties
-        user.name = img.data('name');
-        user.health_points = parseInt(img.data('healthpoints'));
-        user.attack_power = parseInt(img.data('attackpower'));
-        user.base_attack_power = parseInt(img.data('baseattackpower'));
-        user.counter_attack_power = parseInt(img.data('counterattackpower'));
-
+        // set $user properties
+        $user.name = img.data('name');
+        $user.health_points = parseInt(img.data('healthpoints'));
+        $user.attack_power = parseInt(img.data('attackpower'));
+        $user.base_attack_power = parseInt(img.data('baseattackpower'));
+        $user.counter_attack_power = parseInt(img.data('counterattackpower'));
 
 
         // move item
-        avatar.detach().appendTo(game.userContainer);
+        avatar.detach().prependTo(game.userContainer);
 
         // add 'Choose opponent' language
          game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
 
         // create player properties html
-        playerprops = '<p><strong>' + user.name + '</strong></p>'
-                      +'<p>Health: ' + user.health_points + '</p>';
+        playerprops = '<p><strong>' + $user.name + '</strong></p>'
+                      +'<p>Health: ' + $user.health_points + '</p>';
 
         // append player properties
-        game.userContainer.append(playerprops);
+        game.userPropsContainer.append(playerprops);
 
         // update instructions
         game.instructions.fadeOut('slow', function() {
@@ -126,32 +130,37 @@ $(function() {
         })
       }
       else {
+        
+        if($numPlayer > 0) {
 
-        // create opponent object
-        opponent = Object.create(this.player);  
+          // create opponent object
+          $opponent = Object.create(this.player);  
 
-        // set opponent properties
-        opponent.name = img.data('name');
-        opponent.health_points = parseInt(img.data('healthpoints'));
-        opponent.attack_power = parseInt(img.data('attackpower'));
-        opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
+          // set $opponent properties
+          $opponent.name = img.data('name');
+          $opponent.health_points = parseInt(img.data('healthpoints'));
+          $opponent.attack_power = parseInt(img.data('attackpower'));
+          $opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
 
+          // move item
+          avatar.detach().prependTo(game.opponentContainer);
 
-        // move item
-        avatar.detach().appendTo(game.opponentContainer);
+          // create player properties html
+          playerprops = '<p><strong>' + $opponent.name + '</strong></p>'
+                        +'<p>Health: ' + $opponent.health_points + '</p>';
 
-        // create player properties html
-        playerprops = '<p><strong>' + opponent.name + '</strong></p>'
-                      +'<p>Health: ' + opponent.health_points + '</p>';
+          // append player properties
+          game.opponentPropsContainer.append(playerprops);
 
-        // append player properties
-        game.opponentContainer.append(playerprops);
+          // show attack button
+          game.attackButton.addClass('animated fadeIn');
 
-        // show attack button
-        game.attackButton.addClass('animated fadeIn');
+          // stop ability to add more than 1 opponent
+          $numPlayer = 0;
 
-
-        this.fight(user, opponent);
+          // start the match
+          this.fight($user, $opponent);
+        }
 
       }
 
@@ -168,9 +177,18 @@ $(function() {
       
       this.attackButton.on('click', function() {
         
-        user.base_attack_power = user.base_attack_power
-        user.attack_power = user.attack_power;
-        console.log(user.attack_power+=user.base_attack_power);
+        $user.base_attack_power = $user.base_attack_power
+        $user.attack_power = $user.attack_power;
+        console.log($user.attack_power+=$user.base_attack_power);
+        $user.current_health = $user.attack_power+=$user.base_attack_power;
+
+        // create player properties html
+        playerprops = '<p><strong>' + $user.name + '</strong></p>'
+                      +'<p>Health: ' + $user.current_health + '</p>';
+
+        // append player properties
+        game.userPropsContainer.html(playerprops);
+
 
         
 
