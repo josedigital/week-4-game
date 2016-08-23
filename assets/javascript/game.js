@@ -49,6 +49,9 @@ $(function() {
     // initialize game
     init: function() {
 
+      // show game
+      $('.wrapper').removeClass('fadeOut').addClass('animated fadeIn');
+      
 
       // allow user to begin
       $isUser = true;
@@ -74,13 +77,6 @@ $(function() {
 
       // remove comments
       this.commentator.empty();
-
-      if($user) {
-        $user = Object.create(this.player);
-        $opponent = Object.create(this.player);
-        console.log($user);
-      }
-
 
       // start by making a selection
       this.makeSelection();
@@ -131,10 +127,10 @@ $(function() {
 
       // set $user properties
       $user.name = img.data('name');
-      $user.health_points = parseInt(img.data('healthpoints'));
-      $user.attack_power = parseInt(img.data('attackpower'));
+      $user.health_points = img.data('healthpoints');
+      $user.attack_power = img.data('attackpower');
       $user.base_attack_power = $user.attack_power;
-      $user.counter_attack_power = parseInt(img.data('counterattackpower'));
+      $user.counter_attack_power = img.data('counterattackpower');
 
       // move item
       avatar.detach().prependTo(game.userContainer);
@@ -182,9 +178,9 @@ $(function() {
 
         // set $opponent properties
         $opponent.name = img.data('name');
-        $opponent.health_points = parseInt(img.data('healthpoints'));
-        $opponent.attack_power = parseInt(img.data('attackpower'));
-        $opponent.counter_attack_power = parseInt(img.data('counterattackpower'));
+        $opponent.health_points = img.data('healthpoints');
+        $opponent.attack_power = img.data('attackpower');
+        $opponent.counter_attack_power = img.data('counterattackpower');
 
 
         // move item
@@ -224,6 +220,7 @@ $(function() {
 
     fight: function() {
       
+      // stop the previous game - this is the only thing that stopped the button from firing twice
       if($newgame) { return; }
 
       this.attackButton.on('click', function() {
@@ -325,12 +322,16 @@ $(function() {
           this.attackButton.removeClass('fadeInUp').addClass('fadeOutUp');
           this.resetButton.addClass('animated fadeInUp');
 
-          comments = '<p>You have bested ' + $opponent.name +'.</p>'
+          comments = '<p>You have bested ' + $opponent.name + ', the final character.</p>'
                     +'<p>Play again?.</p>';
 
           // reset game
           this.resetButton.on('click', function() {
-            game.init();
+            $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
+            setTimeout(function() {
+              game.init();
+            }, 750);
+            
           });
 
           // break from old game - prevent fight button from tracking old game
@@ -363,10 +364,15 @@ $(function() {
 
       // reset game
       this.resetButton.on('click', function() {
-        game.init();
+        $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
+        setTimeout(function() {
+          game.init();
+        }, 750);
+        
       });
 
-      
+      // break from old game - prevent fight button from tracking old game
+      $newgame = true;
 
       
     },
@@ -388,6 +394,7 @@ $(function() {
 
       // reset game
       this.resetButton.on('click', function() {
+        $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
         game.init();
       });
 
@@ -400,10 +407,8 @@ $(function() {
 
 
 
-  
-  
-
 
   game.init();
+  
 
 });
