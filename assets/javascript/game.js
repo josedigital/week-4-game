@@ -43,6 +43,7 @@ $(function() {
     resetButton: $('.Reset__button'),
     instructions: $('.Instructions'),
     commentator: $('.Commentator'),
+    wrapper: $('.wrapper'),
 
 
 
@@ -50,7 +51,7 @@ $(function() {
     init: function() {
 
       // show game
-      $('.wrapper').removeClass('fadeOut').addClass('animated fadeIn');
+      this.wrapper.removeClass('fadeOut').addClass('animated fadeIn');
       
 
       // allow user to begin
@@ -327,7 +328,7 @@ $(function() {
 
           // reset game
           this.resetButton.on('click', function() {
-            $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
+            game.wrapper.removeClass('fadeIn').addClass('fadeOut');
             setTimeout(function() {
               game.init();
             }, 750);
@@ -364,7 +365,7 @@ $(function() {
 
       // reset game
       this.resetButton.on('click', function() {
-        $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
+        game.wrapper.removeClass('fadeIn').addClass('fadeOut');
         setTimeout(function() {
           game.init();
         }, 750);
@@ -394,8 +395,10 @@ $(function() {
 
       // reset game
       this.resetButton.on('click', function() {
-        $('.wrapper').removeClass('fadeIn').addClass('fadeOut');
-        game.init();
+        game.wrapper.removeClass('fadeIn').addClass('fadeOut');
+        setTimeout(function() {
+          game.init();
+        }, 750);
       });
 
     }

@@ -58,15 +58,8 @@ header h4 {
 .Active-players {
   margin: 0 auto 2em;
   overflow: auto;
-  /*width: 80%;*/
 }
-.Active-players > div {
-  float: left;
-  width: 33.33333%;
-}
-.Attack {
-  /*padding: 8% 0 0;*/
-}
+
 .Attack__button,
 .Reset__button {
   display: none;
