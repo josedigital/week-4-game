@@ -3,27 +3,29 @@ $(function() {
   // set global vars
   var $isUser,
       $playerprops,
+      $userprops,
+      $opponentprops,
+      $comments,
       $user,
       $opponent,
-      $numPlayer,
-      $newgame;
+      $numPlayer;
       
 
   
 
   var characters = 
-        '<div class="Avatar">'
-          + '<img src="assets/images/the-pirate.jpg" alt="the pirate" class="Avatar--round the-pirate" data-healthpoints="130" data-attackpower="8" data-counterattackpower="16" data-name="The Dread Pirate Roberts">'
-        + '</div>'
-        + '<div class="Avatar">'
-          + '<img src="assets/images/the-albino.jpg" alt="the albino" class="Avatar--round the-albino" data-healthpoints="100" data-attackpower="5" data-counterattackpower="10" data-name="The Albino">'
-        + '</div>'
-        + '<div class="Avatar">'
-          + '<img src="assets/images/the-count.jpeg" alt="the count" class="Avatar--round the-count" data-healthpoints="120" data-attackpower="12" data-counterattackpower="13" data-name="Count Rugen">'
-        + '</div>'
-        + '<div class="Avatar">'
-          + '<img src="assets/images/the-prince.jpeg" alt="the prince" class="Avatar--round the-prince" data-healthpoints="160" data-attackpower="15" data-counterattackpower="12" data-name="Prince Humperdinck">'
-        + '</div>';
+        '<div class="Avatar">' +
+          '<img src="assets/images/the-pirate.jpg" alt="the pirate" class="Avatar--round the-pirate" data-healthpoints="130" data-attackpower="8" data-name="The Dread Pirate Roberts">' +
+        '</div>' +
+        '<div class="Avatar">' +
+          '<img src="assets/images/the-albino.jpg" alt="the albino" class="Avatar--round the-albino" data-healthpoints="100" data-attackpower="5" data-name="The Albino">' +
+        '</div>' +
+        '<div class="Avatar">' +
+          '<img src="assets/images/the-count.jpeg" alt="the count" class="Avatar--round the-count" data-healthpoints="120" data-attackpower="12" data-name="Count Rugen">' +
+        '</div>' +
+        '<div class="Avatar">' +
+          '<img src="assets/images/the-prince.jpeg" alt="the prince" class="Avatar--round the-prince" data-healthpoints="160" data-attackpower="15" data-name="Prince Humperdinck">' +
+        '</div>';
 
 
 
@@ -33,17 +35,17 @@ $(function() {
 
 
     // set variables
-    opponentSelector: $('.opponents'),
-    characterSelector: $('.characters'),
-    userContainer: $('.User'),
-    userPropsContainer: $('.User__properties'),
-    opponentContainer: $('.Opponent'),
-    opponentPropsContainer: $('.Opponent__properties'),
-    attackButton: $('.Attack__button'),
-    resetButton: $('.Reset__button'),
-    instructions: $('.Instructions'),
-    commentator: $('.Commentator'),
-    wrapper: $('.wrapper'),
+    opponentSelector:        $('.opponents'),
+    characterSelector:       $('.characters'),
+    userContainer:           $('.User'),
+    userPropsContainer:      $('.User__properties'),
+    opponentContainer:       $('.Opponent'),
+    opponentPropsContainer:  $('.Opponent__properties'),
+    attackButton:            $('.Attack__button'),
+    resetButton:             $('.Reset__button'),
+    instructions:            $('.Instructions'),
+    commentator:             $('.Commentator'),
+    wrapper:                 $('.wrapper'),
 
 
 
@@ -63,7 +65,7 @@ $(function() {
       // add list of characters to DOM
       this.characterSelector.html(characters).addClass('animated flipInX');
 
-      // reset instructions
+      // re/set instructions
       this.instructions.html('<p>Choose a player to begin your duel...</p>');
 
       // empty user + opponent Containers
@@ -79,12 +81,18 @@ $(function() {
       // remove comments
       this.commentator.empty();
 
+      // unbind the attack button to prevent doubling clicks
+      this.attackButton.unbind();
+      
+      // set attack button clicks
+      this.attackButton.on('click', function() {
+        game.fight();
+      });
+
+      
+      
       // start by making a selection
       this.makeSelection();
-
-      // start the match
-      this.fight();
-      
 
     }, // end init
 
@@ -95,14 +103,15 @@ $(function() {
       // user selects their character
       this.characterSelector.find('.Avatar').on('click', function() {
         if($isUser) {
-        // send selection to selectUser function
+          // send selection to selectUser function
           game.selectUser($(this));
+          // set isUser to false
+          $isUser = false;
         } else {
+          // send selection to selectOpponent function
           game.selectOpponent($(this));
         }
 
-        // set isUser to false
-        $isUser = false;
       });
     },
 
@@ -113,8 +122,7 @@ $(function() {
         name: 0,
         health_points: 0,
         attack_power: 0,
-        base_attack_power: 0,
-        counter_attack_power: 0
+        base_attack_power: 0
     },
 
 
@@ -123,28 +131,31 @@ $(function() {
       // get image to get data
       var img = avatar.find('img');
 
-      // create user object
-      $user = Object.create(this.player);
+      // create user object if it doesn't exist
+      if(!$user) { $user = Object.create(game.player); }
+
 
       // set $user properties
       $user.name = img.data('name');
       $user.health_points = img.data('healthpoints');
       $user.attack_power = img.data('attackpower');
       $user.base_attack_power = $user.attack_power;
-      $user.counter_attack_power = img.data('counterattackpower');
 
       // move item
       avatar.detach().prependTo(game.userContainer);
 
       // add 'Choose opponent' language
-       game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
+      game.characterSelector.prepend('<h4>Choose your Opponent</h4>');
+
+      // make avatars smaller
+      game.characterSelector.find('.Avatar').addClass('Avatar--small');
 
       // create player properties html
-      playerprops = '<h6><strong>' + $user.name + '</strong></h6>'
-                    +'<p>Health: ' + $user.health_points + '</p>';
+      $playerprops = '<h6><strong>' + $user.name + '</strong></h6>' +
+                     '<p>Health: ' + $user.health_points + '</p>';
 
       // append player properties
-      game.userPropsContainer.append(playerprops);
+      game.userPropsContainer.append($playerprops);
 
       // update instructions
       game.instructions.fadeOut('slow', function() {
@@ -174,25 +185,29 @@ $(function() {
         this.attackButton.attr('disabled', false);
         
 
-        // create opponent object
-        $opponent = Object.create(this.player);
+        // create opponent object if doesn't exist
+        if(!$opponent) { $opponent = Object.create(game.player); }
 
         // set $opponent properties
         $opponent.name = img.data('name');
         $opponent.health_points = img.data('healthpoints');
         $opponent.attack_power = img.data('attackpower');
-        $opponent.counter_attack_power = img.data('counterattackpower');
 
-
+        
         // move item
         avatar.detach().prependTo(game.opponentContainer);
+        // make slected opponent avatar regular size
+        setTimeout(function() {
+          avatar.removeClass('Avatar--small');
+        }, 150);
+        
 
         // create player properties html
-        playerprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
-                      +'<p>Health: ' + $opponent.health_points + '</p>';
+        $playerprops = '<h6><strong>' + $opponent.name + '</strong></h6>' +
+                       '<p>Health: ' + $opponent.health_points + '</p>';
 
         // append player properties
-        game.opponentPropsContainer.append(playerprops);
+        game.opponentPropsContainer.append($playerprops);
 
         
 
@@ -221,10 +236,7 @@ $(function() {
 
     fight: function() {
       
-      // stop the previous game - this is the only thing that stopped the button from firing twice
-      if($newgame) { return; }
-
-      this.attackButton.on('click', function() {
+      
 
         /*------------- USER CALCULATIONS -------------------*/
 
@@ -232,11 +244,11 @@ $(function() {
         $user.health_points -= $opponent.attack_power;
 
         // create user properties html
-        userprops = '<h6><strong>' + $user.name + '</strong></h6>'
-                   +'<p>Health: ' + $user.health_points + '</p>';
+        $userprops = '<h6><strong>' + $user.name + '</strong></h6>' +
+                     '<p>Health: ' + $user.health_points + '</p>';
 
         // append player properties
-        game.userPropsContainer.html(userprops);
+        game.userPropsContainer.html($userprops);
 
 
 
@@ -248,20 +260,20 @@ $(function() {
 
 
         // create player properties html
-        opponentprops = '<h6><strong>' + $opponent.name + '</strong></h6>'
-                       +'<p>Health: ' + $opponent.health_points + '</p>';
+        $opponentprops = '<h6><strong>' + $opponent.name + '</strong></h6>' +
+                         '<p>Health: ' + $opponent.health_points + '</p>';
 
         // append player properties
-        game.opponentPropsContainer.html(opponentprops);
+        game.opponentPropsContainer.html($opponentprops);
 
 
 
 
         /*------------- COMMENTATOR -------------------*/
-        comments = '<p>You hit ' + $opponent.name + ' with ' + $user.attack_power + ' points worth of damage.</p>'
-                  +'<p>' + $opponent.name + ' hit you with ' + $opponent.attack_power + ' ponts worth of damage.</p>';
+        $comments = '<p>You hit ' + $opponent.name + ' with ' + $user.attack_power + ' points worth of damage.</p>' +
+                    '<p>' + $opponent.name + ' hit you with ' + $opponent.attack_power + ' ponts worth of damage.</p>';
         // add comments to DOM
-        game.commentator.html(comments);
+        game.commentator.html($comments);
 
 
 
@@ -288,8 +300,6 @@ $(function() {
         }
 
 
-      });
-
 
     },
 
@@ -313,8 +323,8 @@ $(function() {
       
       
       /*------------- COMMENTATOR -------------------*/
-        comments = '<p>You have bested ' + $opponent.name +'.</p>'
-                  +'<p>Choose a new opponent to continue playing.</p>';
+        $comments = '<p>You have bested ' + $opponent.name +'.</p>' +
+                    '<p>Choose a new opponent to continue playing.</p>';
 
 
         // if all opponents have been beat
@@ -323,8 +333,8 @@ $(function() {
           this.attackButton.removeClass('fadeInUp').addClass('fadeOutUp');
           this.resetButton.addClass('animated fadeInUp');
 
-          comments = '<p>You have bested ' + $opponent.name + ', the final character.</p>'
-                    +'<p>Play again?.</p>';
+          $comments = '<p>You have bested ' + $opponent.name + ', the final character.</p>' +
+                      '<p>Play again?.</p>';
 
           // reset game
           this.resetButton.on('click', function() {
@@ -335,14 +345,12 @@ $(function() {
             
           });
 
-          // break from old game - prevent fight button from tracking old game
-          $newgame = true;
         }
 
 
         
         // add comments to DOM
-        game.commentator.html(comments);
+        game.commentator.html($comments);
 
         
 
@@ -358,9 +366,9 @@ $(function() {
       
 
       /*------------- COMMENTATOR -------------------*/
-        comments = '<p>Inconceivable! You have been bested.</p>';
+        $comments = '<p>Inconceivable! You have been bested.</p>';
         // add comments to DOM
-        game.commentator.html(comments);
+        game.commentator.html($comments);
 
 
       // reset game
@@ -371,9 +379,6 @@ $(function() {
         }, 750);
         
       });
-
-      // break from old game - prevent fight button from tracking old game
-      $newgame = true;
 
       
     },
@@ -388,9 +393,9 @@ $(function() {
       
 
       /*------------- COMMENTATOR -------------------*/
-        comments = '<p>Well played. A draw it is.</p>';
-        // add comments to DOM
-        game.commentator.html(comments);
+      $comments = '<p>Well played. A draw it is.</p>';
+      // add comments to DOM
+      game.commentator.html($comments);
 
 
       // reset game
@@ -405,7 +410,7 @@ $(function() {
 
 
 
-  } // end game
+  }; // end game
 
 
 

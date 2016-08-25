@@ -90,6 +90,7 @@ header h4 {
   display: inline-block;
   overflow: hidden;
   margin-right: 10px;
+  transition: all 0.3s;
   height: 200px;
   width: 200px;
 }
@@ -109,11 +110,13 @@ img.Avatar--round:hover {
   margin: 0 auto;
   width: 80%;
 }
-
-
 .Chosen-player .Avatar--round {
   float: none;
   margin: 0 auto;
+}
+.Avatar--small {
+  height: 120px;
+  width: 120px;
 }
 
 
