@@ -1,5 +1,7 @@
 body {
-  background-color: #fafafa;
+  /*background-color: #fafafa;*/
+  background: #fafafa url('../images/gamebg.png') center 0 no-repeat;
+  background-attachment: scroll;
 }
 
 h1,h2,h3,h4,h5,h6 {

@@ -83,8 +83,6 @@ $(function() {
       this.attackButton.on('click', function() {
         game.fight();
       });
-
-      
       
       // start by making a selection
       this.makeSelection();
@@ -365,6 +363,6 @@ $(function() {
   }; // end game
 
   // run the game
-  game.init();  
+  game.init();
 
 });
